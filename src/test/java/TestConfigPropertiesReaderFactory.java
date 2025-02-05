@@ -1,4 +1,5 @@
 import com.redhat.workscripts.Main;
+import com.redhat.workscripts.config.ConfigPropertiesException;
 import com.redhat.workscripts.config.ConfigPropertiesReaderFactory;
 import org.junit.jupiter.api.Test;
 
@@ -17,35 +18,39 @@ public class TestConfigPropertiesReaderFactory
     public void testMainCommandLineArgumentsFail()
     {
         //One single invalid argument
-        Throwable exception = assertThrows(RuntimeException.class, () -> {
-            String[] args = new String[1];
-            args[0] = invalidArgumentForParameter;
-            Main.main(args);
+        String invalidProperty;
+        ConfigPropertiesException exception = assertThrows(ConfigPropertiesException.class, () -> {
+                String[] args = new String[1];
+                args[0] = invalidArgumentForParameter;
+                Main.main(args);
         });
-        assertEquals(ConfigPropertiesReaderFactory.STRING_IS_NOT_A_VALID_PROPERTY_CANNOT_CONTINUE
-                + invalidArgumentForParameter , exception.getMessage());
+        invalidProperty = exception.getInvalidProperty();
+
+        assertEquals(invalidArgumentForParameter , invalidProperty);
+
 
         //One invalid argument and two valid ones
-        exception = assertThrows(RuntimeException.class, () -> {
-            String[] args = new String[3];
+        exception = assertThrows(ConfigPropertiesException.class, () -> {
+            String [] args = new String[3];
             args[0] = "a=b";
             args[1] = "b=c";
             args[2] = invalidArgumentForParameter;
             Main.main(args);
         });
-        assertEquals(ConfigPropertiesReaderFactory.STRING_IS_NOT_A_VALID_PROPERTY_CANNOT_CONTINUE
-                + invalidArgumentForParameter , exception.getMessage());
+        invalidProperty = exception.getInvalidProperty();
 
+        assertEquals(invalidArgumentForParameter , invalidProperty);
 
-        exception = assertThrows(RuntimeException.class, () -> {
+        exception = assertThrows(ConfigPropertiesException.class, () -> {
             //note that args[2] = null
             String[] args = new String[3];
             args[0] = "a=b";
             args[1] = "b=c";
             Main.main(args);
         });
-        assertEquals(ConfigPropertiesReaderFactory.STRING_IS_NOT_A_VALID_PROPERTY_CANNOT_CONTINUE
-                + null , exception.getMessage());
+        invalidProperty = exception.getInvalidProperty();
+
+        assertEquals(null , invalidProperty);
     }
 
 

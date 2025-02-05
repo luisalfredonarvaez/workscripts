@@ -10,7 +10,7 @@ import java.util.Properties;
 public class ConfigPropertiesReaderFactory
 {
 
-    public static final String STRING_IS_NOT_A_VALID_PROPERTY_CANNOT_CONTINUE = "String is not a valid property, cannot continue: ";
+    public static final String STRING_IS_NOT_A_VALID_PROPERTY_CANNOT_CONTINUE = "String is not a valid property, cannot continue: '%s'";
 
     public static Properties createFromFile(String fileName)
     {
@@ -50,7 +50,7 @@ public class ConfigPropertiesReaderFactory
         {
             String[] nameValue = parseNameValueFromString(arg);
             if (null == nameValue || nameValue.length != 2)
-                throw new RuntimeException(STRING_IS_NOT_A_VALID_PROPERTY_CANNOT_CONTINUE + arg);
+                throwArgStringInvalidProperty(arg);
 
             properties.setProperty(nameValue[0], nameValue[1]);
         }
@@ -81,6 +81,13 @@ public class ConfigPropertiesReaderFactory
         return ret;
     }
 
+    private static void throwArgStringInvalidProperty(String arg)
+    {
+        Objects.requireNonNull(arg);
 
+        ConfigPropertiesException cpe =
+                new ConfigPropertiesException(STRING_IS_NOT_A_VALID_PROPERTY_CANNOT_CONTINUE, arg);
 
+        throw cpe;
+    }
 }

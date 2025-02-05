@@ -9,6 +9,7 @@ import java.util.Properties;
 @Log4j2
 public class ConfigProperties
 {
+    public static final String MANDATORY_PROPERTY_NOT_FOUND = "Mandatory property not found. Cannot continue: '%s'";
     private static final String DEFAULT_PROPERTIES_FILE_PATH = "src/main/resources/application.properties";
     private static final Logger log = LogManager.getLogger(ConfigProperties.class);
     private Properties commandLineProperties;
