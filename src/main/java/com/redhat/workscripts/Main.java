@@ -1,19 +1,31 @@
+//https://www.baeldung.com/spring-boot-console-app
 package com.redhat.workscripts;
 
-import com.redhat.workscripts.config.ConfigProperties;
+import com.redhat.workscripts.config.ConfigPropertiesHandler;
 import lombok.extern.log4j.Log4j2;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @Log4j2
-public class Main
+@SpringBootApplication
+public class Main implements CommandLineRunner
 {
-    private static final Logger log = LogManager.getLogger(Main.class);
+    @Autowired
+    private ConfigPropertiesHandler configPropertiesHandler;
 
     public static void main(String [] args)
     {
         log.info("Starting app");
-        ConfigProperties.initConfig(args);
+        SpringApplication.run(Main.class, args);
+        log.info("App ended");
+    }
+
+    @Override
+    public void run(String... args)
+    {
+        configPropertiesHandler.validateProperties();
         log.info("Config loaded");
     }
 }
