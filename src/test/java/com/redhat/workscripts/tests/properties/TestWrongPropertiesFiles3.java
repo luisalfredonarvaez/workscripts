@@ -15,8 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
 @EnableConfigurationProperties(value = ConfigPropertiesHandler.class)
-@TestPropertySource("classpath:test0-wrong1-application.properties")
-public class TestWrongPropertiesFiles1
+@TestPropertySource("classpath:test0-wrong3-application.properties")
+public class TestWrongPropertiesFiles3
 {
     @Autowired
     private ConfigPropertiesHandler configPropertiesHandler;
@@ -32,7 +32,7 @@ public class TestWrongPropertiesFiles1
         }
         catch (ConfigPropertiesException cpe)
         {
-            assertEquals(cpe.getInvalidPropertyName(), "menusFetchUris");
+            assertEquals(cpe.getInvalidPropertyName(), "scriptEnvFilters");
             assertEquals(cpe.getIndex(), 0);
         }
         assert(true);
