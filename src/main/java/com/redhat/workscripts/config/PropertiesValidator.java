@@ -1,6 +1,7 @@
 package com.redhat.workscripts.config;
 
 import jakarta.validation.constraints.NotEmpty;
+import lombok.NonNull;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -8,11 +9,12 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class PropertiesValidator
 {
     private final ConfigPropertiesHandler configPropertiesHandler;
-    public PropertiesValidator(ConfigPropertiesHandler configPropertiesHandler)
+    public PropertiesValidator(@NonNull ConfigPropertiesHandler configPropertiesHandler)
     {
         Objects.requireNonNull(configPropertiesHandler);
         this.configPropertiesHandler = configPropertiesHandler;
@@ -49,8 +51,10 @@ public class PropertiesValidator
         }
     }
 
-    private boolean isValidURL(String url)
+    private boolean isValidURL(@NonNull String url)
     {
+        Objects.requireNonNull(url);
+
         try {
             new URL(url).toURI();
             return true;
@@ -60,8 +64,10 @@ public class PropertiesValidator
     }
 
     //https://www.baeldung.com/java-validate-filename
-    private boolean isValidFilename(String filename)
+    private boolean isValidFilename(@NonNull String filename)
     {
+        Objects.requireNonNull(filename);
+
         if (filename == null || filename.isEmpty() || filename.length() > 255) {
             return false;
         }
@@ -71,21 +77,50 @@ public class PropertiesValidator
 
     public static final Character[] INVALID_WINDOWS_SPECIFIC_CHARS = {'"', '*', '<', '>', '?', '|'};
     public static final Character[] INVALID_UNIX_SPECIFIC_CHARS = {'\000','/'};
-    public static Character[] getInvalidCharsByOS() {
-        String os = System.getProperty("os.name").toLowerCase();
-        if (os.contains("win")) {
+    public static Character[] getInvalidCharsByOS()
+    {
+        SupportedOS supportedOS = OSUtil.getSupportedOS();
+
+        if (supportedOS == SupportedOS.WIN)
             return INVALID_WINDOWS_SPECIFIC_CHARS;
-        } else if (os.contains("nix") || os.contains("nux") || os.contains("mac")) {
+        if (supportedOS == SupportedOS.UNIX_LINUX || supportedOS == SupportedOS.MACOS)
             return INVALID_UNIX_SPECIFIC_CHARS;
-        } else {
-            return new Character[]{};
-        }
+
+        throw new RuntimeException("Programming error");
     }
 
     private void validateListFromParameter(List<?> list, String propertyName)
     {
+        Objects.requireNonNull(propertyName);
+
         if (null == list || list.isEmpty())
             throw new ConfigPropertiesException("Invalid parameter array: '%s': Zero length or null value",
                     propertyName);
+    }
+
+    public void validateWorkDirectory()
+    {
+        WorkDirectory workDirectory = configPropertiesHandler.getWorkDirectory();
+        Objects.requireNonNull(workDirectory);
+
+        if (!workDirectory.isValidWorkDir())
+            throw new ConfigPropertiesException("Invalid application workdir parameter '%s': '%s': Not a valid directory" +
+                    " or not readable or does not exist",
+                    "appWorkdir", workDirectory.getWorkdirAsString());
+    }
+
+    public void validateRepositoryType()
+    {
+        String repositoryType = configPropertiesHandler.getRepositoryType();
+        Objects.requireNonNull(repositoryType);
+
+
+        Optional<SupportedRepositoryType> opSRT = SupportedRepositoryType.lookForEquivalent(repositoryType);
+        boolean validValue=!opSRT.isEmpty();
+
+
+        if (!validValue)
+            throw new ConfigPropertiesException("Invalid repository type '%s'",
+                    "repositoryType", repositoryType);
     }
 }

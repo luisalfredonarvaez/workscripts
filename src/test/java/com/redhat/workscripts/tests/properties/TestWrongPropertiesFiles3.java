@@ -26,14 +26,15 @@ public class TestWrongPropertiesFiles3
     {
         try
         {
+            configPropertiesHandler.setupProperties();
             configPropertiesHandler.validateProperties();
             //It this point is reached, no exception is thrown, which is bad because we expect an exception
             assert(false);
         }
         catch (ConfigPropertiesException cpe)
         {
-            assertEquals(cpe.getInvalidPropertyName(), "scriptEnvFilters");
-            assertEquals(cpe.getIndex(), 0);
+            assertEquals("scriptEnvFilters", cpe.getInvalidPropertyName() );
+            assertEquals(0, cpe.getIndex());
         }
         assert(true);
     }

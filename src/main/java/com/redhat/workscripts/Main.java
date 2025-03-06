@@ -2,8 +2,7 @@
 package com.redhat.workscripts;
 
 import com.redhat.workscripts.config.ConfigPropertiesHandler;
-import com.redhat.workscripts.fetchers.AbstractDirectoriesFetcher;
-import com.redhat.workscripts.fetchers.FetcherFactory;
+import com.redhat.workscripts.app.ApplicationProcesses;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -11,7 +10,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.net.URISyntaxException;
-import java.util.List;
 
 @Log4j2
 @SpringBootApplication
@@ -30,12 +28,7 @@ public class Main implements CommandLineRunner
     @Override
     public void run(String... args) throws URISyntaxException
     {
-        configPropertiesHandler.validateProperties();
-        log.info("Config loaded");
-        FetcherFactory factory = new FetcherFactory();
-        List<AbstractDirectoriesFetcher> directoriesFetcherList = factory.getFetchers(configPropertiesHandler.getMenusFetchUris());
-        for (AbstractDirectoriesFetcher directoryFetcher: directoriesFetcherList)
-            directoryFetcher.fetchAllFromURI();
-        log.info("URIs fetched");
+        ApplicationProcesses applicationProcesses = new ApplicationProcesses(configPropertiesHandler);
+        applicationProcesses.init();
     }
 }

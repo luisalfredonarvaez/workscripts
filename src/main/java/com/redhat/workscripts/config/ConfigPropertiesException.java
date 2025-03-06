@@ -1,7 +1,10 @@
 package com.redhat.workscripts.config;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
+
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -12,33 +15,39 @@ public class ConfigPropertiesException extends IllegalArgumentException
     private String formatMessage;
     private int index;
 
-    public ConfigPropertiesException(String formatMessage,
-                                     String invalidPropertyName)
+    public ConfigPropertiesException(@NonNull String message,
+                                     @NonNull Throwable exception)
+    {
+        super(message, exception);
+    }
+
+    public ConfigPropertiesException(@NonNull String formatMessage,
+                                     @NonNull String invalidPropertyName)
     {
         super(String.format(formatMessage, invalidPropertyName));
-        this.formatMessage = formatMessage;
-        this.invalidPropertyName = invalidPropertyName;
-        this.invalidPropertyValue = null;
-        this.index = -1;
+        this.setFormatMessage(formatMessage);
+        this.setInvalidPropertyName(invalidPropertyName);
+        this.setInvalidPropertyValue(null);
+        this.setIndex(-1);
     }
 
     public ConfigPropertiesException(String formatMessage, String invalidPropertyName,
                                      String invalidPropertyValue)
     {
         super(String.format(formatMessage, invalidPropertyName, invalidPropertyValue));
-        this.formatMessage = formatMessage;
-        this.invalidPropertyName = invalidPropertyName;
-        this.invalidPropertyValue = invalidPropertyValue;
-        this.index = -1;
+        this.setFormatMessage(formatMessage);
+        this.setInvalidPropertyName(invalidPropertyName);
+        this.setInvalidPropertyValue(invalidPropertyValue);
+        this.setIndex(-1);
     }
 
     public ConfigPropertiesException(String formatMessage, String invalidPropertyName,
                                      String invalidPropertyValue, int index)
     {
         super(String.format(formatMessage, invalidPropertyName, invalidPropertyValue, index));
-        this.formatMessage = formatMessage;
-        this.invalidPropertyName = invalidPropertyName;
-        this.invalidPropertyValue = invalidPropertyValue;
-        this.index = index;
+        this.setFormatMessage(formatMessage);
+        this.setInvalidPropertyName(invalidPropertyName);
+        this.setInvalidPropertyValue(invalidPropertyValue);
+        this.setIndex(index);
     }
 }

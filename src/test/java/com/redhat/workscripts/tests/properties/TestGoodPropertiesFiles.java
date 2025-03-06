@@ -21,6 +21,7 @@ public class TestGoodPropertiesFiles
     @Test
     void check()
     {
+        configPropertiesHandler.setupProperties();
         configPropertiesHandler.validateProperties();
     }
 }

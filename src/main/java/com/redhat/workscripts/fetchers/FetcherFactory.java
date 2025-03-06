@@ -1,5 +1,8 @@
 package com.redhat.workscripts.fetchers;
 
+import com.redhat.workscripts.config.ConfigPropertiesHandler;
+import lombok.NonNull;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -8,24 +11,38 @@ import java.util.Objects;
 
 public class FetcherFactory
 {
-    public List<AbstractDirectoriesFetcher> getFetchers(List<String> suris)
+    private ConfigPropertiesHandler configPropertiesHandler;
+    public FetcherFactory(@NonNull ConfigPropertiesHandler configPropertiesHandler)
+    {
+        Objects.requireNonNull(configPropertiesHandler);
+        this.configPropertiesHandler = configPropertiesHandler;
+    }
+
+    public List<DirectoriesFetcher> getFetchers()
             throws URISyntaxException
     {
-        Objects.requireNonNull(suris);
+        return getFetchers(configPropertiesHandler.getMenusFetchUris());
+    }
 
-        List<AbstractDirectoriesFetcher> ret = new ArrayList<>();
-        for (String suri: suris)
-            ret.add(getFetcher(suri));
+    public List<DirectoriesFetcher> getFetchers(@NonNull List<String> strUris)
+            throws URISyntaxException
+    {
+        Objects.requireNonNull(strUris);
+
+        List<DirectoriesFetcher> ret = new ArrayList<>();
+        for (String strUri: strUris)
+            ret.add(getFetcher(strUri));
 
         return ret;
     }
 
-    public AbstractDirectoriesFetcher getFetcher(String suri)
+    public DirectoriesFetcher getFetcher(@NonNull String strUri)
             throws URISyntaxException
     {
-        //TODO
-        AbstractDirectoriesFetcher iDirectoriesFetcher = null;
-        URI uri = new URI(suri);
+        Objects.requireNonNull(strUri);
+
+        DirectoriesFetcher directoriesFetcher;
+        URI uri = new URI(strUri);
 
         String scheme = uri.getScheme();
         if (null == scheme)
@@ -33,14 +50,14 @@ public class FetcherFactory
 
         if (scheme.equals("file"))
         {
-            iDirectoriesFetcher = new FileSystemFetcher(uri);
-            return iDirectoriesFetcher;
+            directoriesFetcher = new FileSystemDirectoriesFetcher(configPropertiesHandler, uri);
+            return directoriesFetcher;
         }
 
         if (scheme.equals("http") || scheme.equals("git"))
         {
-            iDirectoriesFetcher = new GitFetcher(uri);
-            return iDirectoriesFetcher;
+            directoriesFetcher = new GitFetcher(configPropertiesHandler, uri);
+            return directoriesFetcher;
         }
 
         throw new UnsupportedOperationException("scheme still not implemented:" + scheme);
