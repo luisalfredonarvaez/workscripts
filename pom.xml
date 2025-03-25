@@ -14,7 +14,7 @@
 
 
     <groupId>groupId</groupId>
-    <artifactId>workscripts</artifactId>
+    <artifactId>scripts-metadata</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
@@ -52,18 +52,57 @@
         </repository>
     </repositories>
 
+    <!-- Spring data JPA dependency -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-bom</artifactId>
+                <version>2024.1.3</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
+    <!-- Decided NOT to use JPA for a file based repository! -->
+        <!-- Spring Data JPA -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+        </dependency>
+
+        <!-- Spring Data JPA starter -->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-data-jpa</artifactId>-->
+<!--        </dependency>-->
+
+        <!-- https://es.stackoverflow.com/questions/498185/error-java-lang-classnotfoundexception-jakarta-persistence-persistence -->
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>6.2.0.CR2</version>
+        </dependency>
+
         <!-- Spring boot starter -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
 
-        <!-- Spring boot properties validator starter -->
+        <!-- Spring boot properties validator dependency -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation</artifactId>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
         </dependency>
+
+        <!-- Spring boot properties validator starter -->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-validation</artifactId>-->
+<!--        </dependency>-->
 
         <!-- GUI Screen library -->
         <dependency>
@@ -93,18 +132,18 @@
         </dependency>
 
         <!-- JSR 303 - Bean Validation API -->
-        <dependency>
-            <groupId>jakarta.validation</groupId>
-            <artifactId>jakarta.validation-api</artifactId>
-            <version>3.0.2</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>jakarta.validation</groupId>-->
+<!--            <artifactId>jakarta.validation-api</artifactId>-->
+<!--            <version>3.0.2</version>-->
+<!--        </dependency>-->
 
         <!-- Bean Validation API Reference Implementation -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <version>8.0.1.Final</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.hibernate</groupId>-->
+<!--            <artifactId>hibernate-validator</artifactId>-->
+<!--            <version>8.0.1.Final</version>-->
+<!--        </dependency>-->
 
         <!-- Apache Commons IO -->
         <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
@@ -142,7 +181,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>com.redhat.workscripts.Main</mainClass>
+                    <mainClass>com.redhat.scripts.metadata.Main</mainClass>
                     <arguments>
 <!--                        <argument>argument1</argument>-->
                     </arguments>
