@@ -1,4 +1,4 @@
-package com.redhat.scripts.metadata.app;
+package com.redhat.scripts.metadata.services;
 
 import com.redhat.scripts.metadata.config.ConfigPropertiesHandler;
 import com.redhat.scripts.metadata.entities.Directory;
@@ -18,7 +18,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Log4j2
-public class ApplicationProcesses
+public class ApplicationProcessesService
 {
     private AbstractRepository<Directory, Long> directoriesRepository;
     private AbstractRepositoryManager repositoryManager;
@@ -26,7 +26,7 @@ public class ApplicationProcesses
     @Autowired
     private ConfigPropertiesHandler configPropertiesHandler;
 
-    public ApplicationProcesses(@NonNull ConfigPropertiesHandler configPropertiesHandler)
+    public ApplicationProcessesService(@NonNull ConfigPropertiesHandler configPropertiesHandler)
     {
         Objects.requireNonNull(configPropertiesHandler);
         this.configPropertiesHandler = configPropertiesHandler;

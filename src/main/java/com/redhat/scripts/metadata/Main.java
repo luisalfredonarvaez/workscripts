@@ -2,16 +2,12 @@
 package com.redhat.scripts.metadata;
 
 import com.redhat.scripts.metadata.config.ConfigPropertiesHandler;
-import com.redhat.scripts.metadata.app.ApplicationProcesses;
-import com.redhat.scripts.metadata.entities.Directory;
-import com.redhat.scripts.metadata.repository.AbstractRepository;
+import com.redhat.scripts.metadata.services.ApplicationProcessesService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import java.net.URISyntaxException;
 
@@ -34,7 +30,7 @@ public class Main implements CommandLineRunner
     @Override
     public void run(String... args) throws URISyntaxException
     {
-        ApplicationProcesses applicationProcesses = new ApplicationProcesses(configPropertiesHandler);
-        applicationProcesses.init();
+        ApplicationProcessesService applicationProcessesService = new ApplicationProcessesService(configPropertiesHandler);
+        applicationProcessesService.init();
     }
 }
