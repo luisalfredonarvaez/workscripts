@@ -21,7 +21,6 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <lanterna.version>3.1.2</lanterna.version>
         <exec.maven.plugin>3.5.0</exec.maven.plugin>
     </properties>
 
@@ -103,13 +102,6 @@
 <!--            <groupId>org.springframework.boot</groupId>-->
 <!--            <artifactId>spring-boot-starter-validation</artifactId>-->
 <!--        </dependency>-->
-
-        <!-- GUI Screen library -->
-        <dependency>
-            <groupId>com.googlecode.lanterna</groupId>
-            <artifactId>lanterna</artifactId>
-            <version>${lanterna.version}</version>
-        </dependency>
 
         <!-- Logging -->
         <dependency>
