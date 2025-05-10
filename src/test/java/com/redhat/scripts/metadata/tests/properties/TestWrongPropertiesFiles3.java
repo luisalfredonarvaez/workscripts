@@ -2,8 +2,8 @@ package com.redhat.scripts.metadata.tests.properties;
 
 //https://www.baeldung.com/spring-boot-testing-configurationproperties
 
-import com.redhat.scripts.metadata.config.ConfigPropertiesException;
-import com.redhat.scripts.metadata.config.ConfigPropertiesHandler;
+import com.redhat.scripts.metadata.app.config.ConfigPropertiesException;
+import com.redhat.scripts.metadata.app.config.ConfigPropertiesHandler;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

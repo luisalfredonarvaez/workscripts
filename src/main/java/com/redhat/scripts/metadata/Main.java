@@ -1,15 +1,23 @@
 //https://www.baeldung.com/spring-boot-console-app
+//https://github.com/mightychip/spring-boot-swing/blob/master/src/main/java/ca/purpleowl/examples/swing/SpringBootSwingApplication.java
+
 package com.redhat.scripts.metadata;
 
-import com.redhat.scripts.metadata.config.ConfigPropertiesHandler;
-import com.redhat.scripts.metadata.services.ApplicationProcessesService;
+import com.redhat.scripts.metadata.app.config.ConfigPropertiesHandler;
+import com.redhat.scripts.metadata.model.entities.Menu;
+import com.redhat.scripts.metadata.app.fetchers.DirectoriesFetcher;
+import com.redhat.scripts.metadata.viewcontroller.gui.MenuGUI;
+import com.redhat.scripts.metadata.app.services.ApplicationService;
+import com.redhat.scripts.metadata.model.services.MenuService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 
 import java.net.URISyntaxException;
+import java.util.List;
 
 @Log4j2
 @SpringBootApplication
@@ -20,17 +28,30 @@ public class Main implements CommandLineRunner
     @Autowired
     private ConfigPropertiesHandler configPropertiesHandler;
 
+    @Autowired
+    private ApplicationService applicationService;
+
+    @Autowired
+    private MenuService menuService;
+
     public static void main(String [] args)
     {
         log.info("Starting app");
-        SpringApplication.run(Main.class, args);
+//        SpringApplication.run(Main.class, args);
+
+        new SpringApplicationBuilder(Main.class)
+                .headless(false)
+                .web(WebApplicationType.NONE)
+                .run(args);
+
         log.info("App ended");
     }
 
     @Override
     public void run(String... args) throws URISyntaxException
     {
-        ApplicationProcessesService applicationProcessesService = new ApplicationProcessesService(configPropertiesHandler);
-        applicationProcessesService.init();
+        List<DirectoriesFetcher> directoriesFetcherList = applicationService.start();
+        Menu menu = menuService.buildMenuFromDirectoryFetchers(directoriesFetcherList);
+        MenuGUI menuGUI = new MenuGUI(menu);
     }
 }
