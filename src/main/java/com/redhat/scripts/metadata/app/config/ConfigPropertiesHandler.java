@@ -25,21 +25,21 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class ConfigPropertiesHandler
 {
-    private final String[] DEFAULT_SCRIPT_ENV_FILTERS = {"oc-setenv.sh", "setenv.sh", "env.sh"};
+    private final String[] DEFAULT_SCRIPT_FILTERS = {"*.sh"};
 
-    //  Some default would be supplied, if the defaults dont work
+    //  Some default would be supplied, if the defaults doesn't work
 //    @NotEmpty
-    private List<String> scriptEnvFilters;
+    private List<String> appScriptWildcards;
 
     //  The app may have no fetchers set up, because it starts with the DB info
 //    @NotEmpty
-    private List<String> menusFetchUris;
+    private List<String> appMenusFetchUris;
 
     //  Some default would be supplied
 //    @NotEmpty
-    private String repositoryType;
+    private String appRepositoryType;
 
-    private String appWorkdir;
+    private String appPathWorkdir;
 
     private PropertiesValidator propertiesValidator;
 
@@ -51,7 +51,7 @@ public class ConfigPropertiesHandler
             throws ConfigPropertiesException
     {
         setDefaultValues();
-        workDirectory = new WorkDirectory(appWorkdir);
+        workDirectory = new WorkDirectory(appPathWorkdir);
 
         if (!workDirectory.exists())
         {
@@ -92,7 +92,7 @@ public class ConfigPropertiesHandler
         propertiesValidator.validateWorkDirectory();
         propertiesValidator.validateRepositoryType();
 
-        supportedRepositoryType = setSupportedRepositoryTypeFromString(repositoryType);
+        supportedRepositoryType = setSupportedRepositoryTypeFromString(appRepositoryType);
     }
 
     private SupportedRepositoryType setSupportedRepositoryTypeFromString(String repositoryType)
@@ -112,22 +112,22 @@ public class ConfigPropertiesHandler
     {
         log.debug("Setting default values for properties!");
 
-        if (null == scriptEnvFilters || scriptEnvFilters.isEmpty())
+        if (null == appScriptWildcards || appScriptWildcards.isEmpty())
         {
-            log.debug("Setting 'scriptEnvFilters' to default values");
-            scriptEnvFilters = Arrays.asList(DEFAULT_SCRIPT_ENV_FILTERS);
+            log.debug("Setting 'appScriptFilters' to default values");
+            appScriptWildcards = Arrays.asList(DEFAULT_SCRIPT_FILTERS);
         }
 
-        if (null == appWorkdir || appWorkdir.isEmpty())
+        if (null == appPathWorkdir || appPathWorkdir.isEmpty())
         {
             log.debug("Setting 'appWorkdir' to default values");
-            appWorkdir = WorkDirectory.getDefaultWorkdirFromOS();
+            appPathWorkdir = WorkDirectory.getDefaultWorkdirFromOS();
         }
 
-        if (null == repositoryType || repositoryType.isEmpty() || repositoryType.isBlank())
+        if (null == appRepositoryType || appRepositoryType.isEmpty() || appRepositoryType.isBlank())
         {
             log.debug("Setting 'repositoryType' to default values");
-            repositoryType = SupportedRepositoryType.FILE.label;
+            appRepositoryType = SupportedRepositoryType.FILE.label;
         }
     }
 }

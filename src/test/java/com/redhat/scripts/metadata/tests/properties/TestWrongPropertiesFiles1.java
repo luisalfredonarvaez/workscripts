@@ -4,6 +4,7 @@ package com.redhat.scripts.metadata.tests.properties;
 
 import com.redhat.scripts.metadata.app.config.ConfigPropertiesException;
 import com.redhat.scripts.metadata.app.config.ConfigPropertiesHandler;
+import com.redhat.scripts.metadata.app.config.PropertiesValidator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ public class TestWrongPropertiesFiles1
         }
         catch (ConfigPropertiesException cpe)
         {
-            assertEquals("menusFetchUris", cpe.getInvalidPropertyName());
+            assertEquals(PropertiesValidator.MENUS_FETCH_URIS_PROPERTY_NAME, cpe.getInvalidPropertyName());
             assertEquals(0, cpe.getIndex());
         }
         assert(true);

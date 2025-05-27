@@ -1,4 +1,4 @@
-package com.redhat.scripts.metadata.viewcontroller.gui;
+package com.redhat.scripts.metadata.view.gui.jswing;
 
 import com.redhat.scripts.metadata.model.entities.Directory;
 

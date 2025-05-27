@@ -21,7 +21,7 @@ public class FetcherFactory
     public List<DirectoriesFetcher> getFetchers()
             throws URISyntaxException
     {
-        return getFetchers(configPropertiesHandler.getMenusFetchUris());
+        return getFetchers(configPropertiesHandler.getAppMenusFetchUris());
     }
 
     public List<DirectoriesFetcher> getFetchers(@NonNull List<String> strUris)

@@ -8,9 +8,9 @@ import com.redhat.scripts.metadata.model.entities.MenuOptionAction;
  * Select the script from the directory to execute
  *
  * */
-public class MenuOptionActionExecuteScript extends MenuOptionAction
+public class ActionExecuteScript extends MenuOptionAction
 {
-    public MenuOptionActionExecuteScript(MenuOption menuOption)
+    public ActionExecuteScript(MenuOption menuOption)
     {
         super(menuOption);
     }

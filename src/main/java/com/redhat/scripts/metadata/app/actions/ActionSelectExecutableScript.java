@@ -9,9 +9,9 @@ import com.redhat.scripts.metadata.model.entities.MenuOptionAction;
  *
  * */
 
-public final  class MenuOptionActionSelectExecutableScript extends MenuOptionAction
+public final  class ActionSelectExecutableScript extends MenuOptionAction
 {
-    public MenuOptionActionSelectExecutableScript(MenuOption menuOption)
+    public ActionSelectExecutableScript(MenuOption menuOption)
     {
         super(menuOption);
     }

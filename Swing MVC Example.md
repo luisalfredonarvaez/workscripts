@@ -26,5 +26,5 @@ In java swing there are some components that implement a model and controller as
 
 A **detailed explanation, example application and source code**: [https://www.link-intersystems.com/blog/2013/07/20/the-mvc-pattern-implemented-with-java-swing/](https://www.link-intersystems.com/blog/2013/07/20/the-mvc-pattern-implemented-with-java-swing/).
 
-See code locally in the package swing.mvc.example (class: java/swing/mvc/example/SwingMVCExample.java)
+See code locally in the package [mvc.jswing.example](src/main/java/mvc/jswing/example/SwingMVCExample.java)
 

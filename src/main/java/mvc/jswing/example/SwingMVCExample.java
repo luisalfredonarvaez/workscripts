@@ -1,4 +1,4 @@
-package swing.mvc.example;
+package mvc.jswing.example;
 
 import java.awt.BorderLayout;
 import java.awt.Container;

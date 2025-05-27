@@ -10,6 +10,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @ExtendWith(SpringExtension.class)
 @EnableConfigurationProperties(value = ConfigPropertiesHandler.class)
 @TestPropertySource("classpath:test0-ok-application.properties")
@@ -23,5 +26,8 @@ public class TestGoodPropertiesFiles
     {
         configPropertiesHandler.setupProperties();
         configPropertiesHandler.validateProperties();
+
+        assertEquals(configPropertiesHandler.getAppMenusFetchUris().size(), 2);
+        assertEquals(configPropertiesHandler.getAppScriptWildcards().size(), 2);
     }
 }

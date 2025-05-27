@@ -13,6 +13,9 @@ import java.util.Optional;
 
 public class PropertiesValidator
 {
+    public static final String MENUS_FETCH_URIS_PROPERTY_NAME = "appMenusFetchUris";
+    public static final String SCRIPT_WILDCARDS_PROPERTY_NAME = "appScriptWildcards";
+
     private final ConfigPropertiesHandler configPropertiesHandler;
     public PropertiesValidator(@NonNull ConfigPropertiesHandler configPropertiesHandler)
     {
@@ -22,8 +25,8 @@ public class PropertiesValidator
 
     public void validateMenusFetchURIs()
     {
-        String propertyName="menusFetchUris";
-        @NotEmpty List<String> menusFetchUris = configPropertiesHandler.getMenusFetchUris();
+        String propertyName=MENUS_FETCH_URIS_PROPERTY_NAME;
+        @NotEmpty List<String> menusFetchUris = configPropertiesHandler.getAppMenusFetchUris();
         validateListFromParameter(menusFetchUris, propertyName);
 
         for (int i = 0; i< menusFetchUris.size(); i++)
@@ -37,8 +40,8 @@ public class PropertiesValidator
 
     public void validateScriptEnvFilters()
     {
-        String propertyName="scriptEnvFilters";
-        @NotEmpty List<String> scriptEnvFilters = configPropertiesHandler.getScriptEnvFilters();
+        String propertyName=SCRIPT_WILDCARDS_PROPERTY_NAME;
+        @NotEmpty List<String> scriptEnvFilters = configPropertiesHandler.getAppScriptWildcards();
 
         validateListFromParameter(scriptEnvFilters, propertyName);
 
@@ -111,7 +114,7 @@ public class PropertiesValidator
 
     public void validateRepositoryType()
     {
-        String repositoryType = configPropertiesHandler.getRepositoryType();
+        String repositoryType = configPropertiesHandler.getAppRepositoryType();
         Objects.requireNonNull(repositoryType);
 
 
