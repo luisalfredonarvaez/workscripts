@@ -71,7 +71,7 @@ public class PropertiesValidator
     {
         Objects.requireNonNull(filename);
 
-        if (filename == null || filename.isEmpty() || filename.length() > 255) {
+        if (filename.isEmpty() || filename.length() > 255) {
             return false;
         }
         return Arrays.stream(getInvalidCharsByOS())
@@ -119,7 +119,7 @@ public class PropertiesValidator
 
 
         Optional<SupportedRepositoryType> opSRT = SupportedRepositoryType.lookForEquivalent(repositoryType);
-        boolean validValue=!opSRT.isEmpty();
+        boolean validValue=opSRT.isPresent();
 
 
         if (!validValue)

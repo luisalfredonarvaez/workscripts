@@ -33,7 +33,7 @@ public class FileSystemDirectoriesFetcher extends DirectoriesFetcher
     @Override
     protected List<Directory> fetchAllFromURIImpl()
     {
-        List<File> filteredFiles = new ArrayList<>();
+        List<File> filteredFiles;
         try
         {
             filteredFiles = filterFilesAccordingToScriptWildcard(new File(uri));
@@ -67,7 +67,7 @@ public class FileSystemDirectoriesFetcher extends DirectoriesFetcher
     {
         List<File> ret = new ArrayList<>();
         List<String> appScriptFilters = configPropertiesHandler.getAppScriptWildcards();
-        log.debug("property appScriptFilters -> ", appScriptFilters);
+        log.debug("property appScriptFilters -> {}", appScriptFilters);
 
         try
         {
@@ -96,7 +96,6 @@ public class FileSystemDirectoriesFetcher extends DirectoriesFetcher
                         log.debug("ACCEPTED File: {}", file.getAbsolutePath());
                         result.add(file);
                     });
-            ;
         }
     }
 

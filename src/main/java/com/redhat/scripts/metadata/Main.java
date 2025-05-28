@@ -26,9 +26,6 @@ import java.util.List;
 public class Main implements CommandLineRunner
 {
     @Autowired
-    private ConfigPropertiesHandler configPropertiesHandler;
-
-    @Autowired
     private ApplicationService applicationService;
 
     @Autowired
@@ -48,10 +45,12 @@ public class Main implements CommandLineRunner
     }
 
     @Override
-    public void run(String... args) throws URISyntaxException
+    public void run(String... args)
+            throws URISyntaxException
     {
         List<DirectoriesFetcher> directoriesFetcherList = applicationService.start();
         Menu menu = menuService.buildMenuFromDirectoryFetchers(directoriesFetcherList);
+        menuService.setInfoActions(menu, applicationService.getInfoActions());
         MenuGUI menuGUI = new MenuGUI(menu);
     }
 }

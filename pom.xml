@@ -151,6 +151,12 @@
             <version>2.18.0</version>
         </dependency>
 
+        <!-- Reflections library -->
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.10.2</version>
+        </dependency>
         <!-- Test -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

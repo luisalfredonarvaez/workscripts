@@ -1,7 +1,11 @@
 package com.redhat.scripts.metadata.app.services;
 
+import com.redhat.scripts.metadata.app.actions.InfoAction;
+import com.redhat.scripts.metadata.app.actions.exceptions.ActionClassesNotFoundException;
+import com.redhat.scripts.metadata.app.config.ActionsConfigPropertiesHandler;
 import com.redhat.scripts.metadata.app.config.ConfigPropertiesHandler;
 import com.redhat.scripts.metadata.model.entities.Directory;
+import com.redhat.scripts.metadata.model.entities.MenuOptionAction;
 import com.redhat.scripts.metadata.model.repository.NullRepositoryException;
 import com.redhat.scripts.metadata.model.repository.AbstractRepository;
 import com.redhat.scripts.metadata.model.repository.RepositoryFactory;
@@ -18,6 +22,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 @Log4j2
 @Getter
@@ -29,21 +34,44 @@ public class ApplicationService
 
     @Autowired
     private ConfigPropertiesHandler configPropertiesHandler;
+
+    @Autowired
+    private ActionsConfigPropertiesHandler actionsConfigPropertiesHandler;
+
+    private Set<InfoAction> infoActions;
+
     private boolean repositoryHasDirectoriesInfo;
 
-    public ApplicationService(@NonNull ConfigPropertiesHandler configPropertiesHandler)
+    public ApplicationService(@NonNull ConfigPropertiesHandler configPropertiesHandler,
+                              @NonNull ActionsConfigPropertiesHandler actionsConfigPropertiesHandler)
     {
         Objects.requireNonNull(configPropertiesHandler);
+        Objects.requireNonNull(actionsConfigPropertiesHandler);
         this.configPropertiesHandler = configPropertiesHandler;
+        this.actionsConfigPropertiesHandler = actionsConfigPropertiesHandler;
+    }
+
+    public List<DirectoriesFetcher> start()
+            throws URISyntaxException, ActionClassesNotFoundException
+    {
+        infoActions = this.loadConfig();
+        return this.loadDirectoriesWhenStarting();
+    }
+
+    private Set<InfoAction> loadConfig()
+            throws ActionClassesNotFoundException
+    {
+        log.info("Config loaded: start");
+        infoActions = actionsConfigPropertiesHandler.loadActionsProperties();
+        this.configPropertiesHandler.setupProperties();
+        this.configPropertiesHandler.validateProperties();
+        log.info("Config loaded: end");
+        return infoActions;
     }
 
     private List<DirectoriesFetcher> loadDirectoriesWhenStarting()
             throws URISyntaxException
     {
-        this.configPropertiesHandler.setupProperties();
-        this.configPropertiesHandler.validateProperties();
-        log.info("Config loaded");
-
         boolean repositoryManagerInitialized = checkIfRepositoryManagerInitialized();
         if (!repositoryManagerInitialized)
         {
@@ -129,11 +157,5 @@ public class ApplicationService
         }
 
         return this.directoriesRepository;
-    }
-
-    public List<DirectoriesFetcher> start()
-            throws URISyntaxException
-    {
-        return this.loadDirectoriesWhenStarting();
     }
 }
