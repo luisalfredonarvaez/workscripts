@@ -3,12 +3,9 @@
 
 package com.redhat.scripts.metadata;
 
-import com.redhat.scripts.metadata.app.config.ConfigPropertiesHandler;
 import com.redhat.scripts.metadata.model.entities.Menu;
-import com.redhat.scripts.metadata.app.fetchers.DirectoriesFetcher;
 import com.redhat.scripts.metadata.view.gui.jswing.MenuGUI;
 import com.redhat.scripts.metadata.app.services.ApplicationService;
-import com.redhat.scripts.metadata.model.services.MenuService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -28,9 +25,6 @@ public class Main implements CommandLineRunner
     @Autowired
     private ApplicationService applicationService;
 
-    @Autowired
-    private MenuService menuService;
-
     public static void main(String [] args)
     {
         log.info("Starting app");
@@ -48,9 +42,7 @@ public class Main implements CommandLineRunner
     public void run(String... args)
             throws URISyntaxException
     {
-        List<DirectoriesFetcher> directoriesFetcherList = applicationService.start();
-        Menu menu = menuService.buildMenuFromDirectoryFetchers(directoriesFetcherList);
-        menuService.setInfoActions(menu, applicationService.getInfoActions());
+        Menu menu = applicationService.start();
         MenuGUI menuGUI = new MenuGUI(menu);
     }
 }

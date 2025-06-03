@@ -17,6 +17,12 @@ public class MenuGUI
     public MenuGUI(Menu menu)
     {
         Objects.requireNonNull(menu);
+        if (null == menu.getInfoActions() || menu.getInfoActions().isEmpty())
+            throw new RuntimeException("Menu must have at least one InfoAction set. Programming error!");
+
+        if (null == menu.getMenuOptionList() || menu.getMenuOptionList().isEmpty())
+            throw new RuntimeException("Menu must have at least one MenuOption set. Programming error!");
+
         this.menu = menu;
         init(menu);
     }

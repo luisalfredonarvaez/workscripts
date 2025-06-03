@@ -5,6 +5,7 @@ import com.redhat.scripts.metadata.app.actions.exceptions.ActionClassesNotFoundE
 import com.redhat.scripts.metadata.app.config.ActionsConfigPropertiesHandler;
 import com.redhat.scripts.metadata.app.config.ConfigPropertiesHandler;
 import com.redhat.scripts.metadata.model.entities.Directory;
+import com.redhat.scripts.metadata.model.entities.Menu;
 import com.redhat.scripts.metadata.model.entities.MenuOptionAction;
 import com.redhat.scripts.metadata.model.repository.NullRepositoryException;
 import com.redhat.scripts.metadata.model.repository.AbstractRepository;
@@ -19,10 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Log4j2
 @Getter
@@ -39,6 +37,7 @@ public class ApplicationService
     private ActionsConfigPropertiesHandler actionsConfigPropertiesHandler;
 
     private Set<InfoAction> infoActions;
+    private List<Directory> directoryList;
 
     private boolean repositoryHasDirectoriesInfo;
 
@@ -51,11 +50,21 @@ public class ApplicationService
         this.actionsConfigPropertiesHandler = actionsConfigPropertiesHandler;
     }
 
-    public List<DirectoriesFetcher> start()
+    public Menu start()
             throws URISyntaxException, ActionClassesNotFoundException
     {
         infoActions = this.loadConfig();
-        return this.loadDirectoriesWhenStarting();
+
+        directoryList = this.buildDirectoryListFromDirectoryFetchers(this.loadDirectoriesWhenStarting());
+
+        if (directoryList.isEmpty())
+        {
+            log.error("No directories found! Exiting application.");
+            throw new RuntimeException("No directories found! Exiting application.");
+        }
+
+        Menu menu = new Menu(directoryList, infoActions);
+        return menu;
     }
 
     private Set<InfoAction> loadConfig()
@@ -68,6 +77,29 @@ public class ApplicationService
         log.info("Config loaded: end");
         return infoActions;
     }
+
+    private List<Directory> buildDirectoryListFromDirectoryFetchers
+            (List<DirectoriesFetcher> directoryFetchersList)
+    {
+        List<Directory> directoryList = new ArrayList<>();
+
+        for (DirectoriesFetcher directoryFetcher : directoryFetchersList)
+        {
+            List<Directory> directories = directoryFetcher.getLastFetchedDirectories();
+            if (directories != null)
+            {
+                directoryList.addAll(directories);
+            }
+        }
+
+        List<Directory> uniqueDirectories = directoryList.stream()
+                .sorted()
+                .distinct()
+                .toList();
+
+        return uniqueDirectories;
+    }
+
 
     private List<DirectoriesFetcher> loadDirectoriesWhenStarting()
             throws URISyntaxException

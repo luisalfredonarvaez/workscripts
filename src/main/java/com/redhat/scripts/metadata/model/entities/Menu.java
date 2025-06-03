@@ -18,21 +18,22 @@ public class Menu
     @Setter(AccessLevel.NONE)
     private UUID id;
     private List<MenuOption> menuOptionList;
-    private boolean hasPendingChanges;
     private Set<InfoAction> infoActions;
 
-    public Menu(@NonNull List<Directory> directoryList)
-    {
-        this(directoryList, false);
-    }
-
-    public Menu(@NonNull List<Directory> directoryList, boolean hasPendingChanges)
+    public Menu(@NonNull List<Directory> directoryList, @NonNull Set<InfoAction> infoActions)
     {
         Objects.requireNonNull(directoryList);
+        if (directoryList.isEmpty())
+            throw new RuntimeException("Directory list cannot be empty. Programming error!");
+
+        Objects.requireNonNull(infoActions);
+        if (infoActions.isEmpty())
+            throw new RuntimeException("InfoActions set cannot be empty. Programming error!");
+
         this.id = UUID.randomUUID();
         this.menuOptionList = directoryList.stream()
                 .map(directory -> new MenuOption(directory))
                 .toList();
-        this.hasPendingChanges = hasPendingChanges;
+        this.infoActions = infoActions;
     }
 }
