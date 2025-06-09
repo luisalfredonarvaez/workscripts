@@ -38,7 +38,7 @@ public class FileSystemRepositoryManager extends AbstractRepositoryManager
         if (null == this.dbPathDirectory)
         {
             File parent = workDirectory.getWorkdirAsFile();
-            String currentPath = parent.getAbsolutePath() + File.pathSeparator + DBFILES_SUBDIR;
+            String currentPath = parent.getAbsolutePath() + File.separator + DBFILES_SUBDIR;
             this.dbPathDirectory = new File(currentPath);
         }
         Objects.requireNonNull(this.dbPathDirectory);
@@ -49,7 +49,6 @@ public class FileSystemRepositoryManager extends AbstractRepositoryManager
     {
         if (repositoryManagerInitialized())
         {
-            Objects.requireNonNull(fileSystemDirectoriesRepository);
             log.debug("Repository manager already initialized");
             return;
         }
@@ -57,11 +56,9 @@ public class FileSystemRepositoryManager extends AbstractRepositoryManager
         if (!this.dbPathDirectory.exists())
             this.dbPathDirectory.mkdir();
 
-        log.debug("Repository manager initialized for the first time");
-
         fileSystemDirectoriesRepository = new FileSystemDirectoriesRepository(this);
 
-
+        log.debug("Repository manager initialized for the first time");
     }
 
     @Override

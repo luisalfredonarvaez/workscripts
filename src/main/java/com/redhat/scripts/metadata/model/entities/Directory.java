@@ -1,5 +1,6 @@
 package com.redhat.scripts.metadata.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +13,11 @@ import java.util.UUID;
 public class Directory implements Comparable
 {
     final private UUID id;
+    final String diskLocationPath;
+    /**
+     * The disk location of the directory.
+     * This is the absolute path to the directory on the disk.
+     */
     final private File diskLocation;
     final private LocalDateTime created;
     private LocalDateTime lastUpdated;
@@ -20,11 +26,17 @@ public class Directory implements Comparable
     @Setter
     private UUID menuOptionId;
 
+    public Directory(@JsonProperty("diskLocationPath") String diskLocationPath)
+    {
+        this(new File(diskLocationPath));
+    }
+
     public Directory(File diskLocation)
     {
         Objects.requireNonNull(diskLocation);
         id = UUID.randomUUID();
         this.diskLocation = diskLocation;
+        this.diskLocationPath = diskLocation.getAbsolutePath();
         this.menuOptionId = null;
         this.created = LocalDateTime.now();
         this.lastUpdated = LocalDateTime.now();
@@ -34,6 +46,7 @@ public class Directory implements Comparable
     @Override
     public boolean equals(Object o)
     {
+        //TODO: This is not the best way to compare directories, but it works for now.
         if (this == o) return true;
         if (!(o instanceof Directory)) return false;
         Directory directory = (Directory) o;

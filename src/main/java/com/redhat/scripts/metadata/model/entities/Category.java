@@ -3,5 +3,6 @@ package com.redhat.scripts.metadata.model.entities;
 public enum Category
 {
     DIAGNOSTIC,
-    EXAMPLE_ENV
+    EXAMPLE_ENV,
+    UNINITIALIZED;
 }

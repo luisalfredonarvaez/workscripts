@@ -143,6 +143,20 @@
 <!--            <version>8.0.1.Final</version>-->
 <!--        </dependency>-->
 
+        <!-- Json Serialization / Deserialization -->
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.17.2</version>
+        </dependency>
+        <!-- Json Serialization / Deserialization: Compatibility with Java 8 LocalDateTime objects -->
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310 -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.18.2.redhat-00004</version>
+        </dependency>
         <!-- Apache Commons IO -->
         <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
         <dependency>

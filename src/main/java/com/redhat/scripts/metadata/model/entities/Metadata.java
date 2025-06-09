@@ -30,7 +30,8 @@ public class Metadata
         this.created = LocalDateTime.now();
         this.lastUpdated = LocalDateTime.now();
         this.tagList = new ArrayList<>();
-        this.category = null;
+        this.category = Category.UNINITIALIZED;
+        this.runTarget = RunTarget.UNINITIALIZED;
     }
 
     public void addTag(String title, String description)
@@ -67,5 +68,14 @@ public class Metadata
         Objects.requireNonNull(runTarget);
         this.runTarget = runTarget;
         this.lastUpdated = LocalDateTime.now();
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (!(o instanceof Metadata)) return false;
+        Metadata metadata = (Metadata) o;
+        return id.equals(metadata.id);
     }
 }

@@ -12,13 +12,12 @@ import java.util.Set;
 import java.util.UUID;
 
 @Getter
-@Setter
 public class Menu
 {
     @Setter(AccessLevel.NONE)
-    private UUID id;
-    private List<MenuOption> menuOptionList;
-    private Set<InfoAction> infoActions;
+    private final UUID id;
+    private final List<MenuOption> menuOptionList;
+    private final Set<InfoAction> infoActions;
 
     public Menu(@NonNull List<Directory> directoryList, @NonNull Set<InfoAction> infoActions)
     {

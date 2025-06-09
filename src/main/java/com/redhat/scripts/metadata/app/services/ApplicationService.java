@@ -6,7 +6,6 @@ import com.redhat.scripts.metadata.app.config.ActionsConfigPropertiesHandler;
 import com.redhat.scripts.metadata.app.config.ConfigPropertiesHandler;
 import com.redhat.scripts.metadata.model.entities.Directory;
 import com.redhat.scripts.metadata.model.entities.Menu;
-import com.redhat.scripts.metadata.model.entities.MenuOptionAction;
 import com.redhat.scripts.metadata.model.repository.NullRepositoryException;
 import com.redhat.scripts.metadata.model.repository.AbstractRepository;
 import com.redhat.scripts.metadata.model.repository.RepositoryFactory;
@@ -21,6 +20,8 @@ import org.springframework.stereotype.Service;
 
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Log4j2
 @Getter
@@ -55,7 +56,7 @@ public class ApplicationService
     {
         infoActions = this.loadConfig();
 
-        directoryList = this.buildDirectoryListFromDirectoryFetchers(this.loadDirectoriesWhenStarting());
+        directoryList = this.loadDirectoriesWhenStarting();
 
         if (directoryList.isEmpty())
         {
@@ -65,6 +66,47 @@ public class ApplicationService
 
         Menu menu = new Menu(directoryList, infoActions);
         return menu;
+    }
+
+    private List<Directory> loadDirectoriesWhenStarting()
+            throws URISyntaxException
+    {
+        boolean repositoryManagerInitialized = checkIfRepositoryManagerInitialized();
+        if (!repositoryManagerInitialized)
+        {
+            log.debug("Repository manager was not initialized previously!");
+            repositoryManager.initRepositoryManager();
+        }
+        else
+            log.debug("Repository manager was initialized previously!");
+
+        repositoryHasDirectoriesInfo = checkIfDirectoriesInfoExists();
+        log.info("Repository exists: {}, repository has directories info: {}",
+                repositoryManagerInitialized, repositoryHasDirectoriesInfo);
+
+        if (!repositoryHasDirectoriesInfo)
+        {
+            log.info("Repository does not have directories info, fetching directories from URIs");
+            List<DirectoriesFetcher> directoriesFetcherList = getDirectoriesFetchers();
+            List<Directory> directories = this.buildDirectoryListFromDirectoryFetchers(directoriesFetcherList);
+
+            log.info("Saving directories to the repository");
+            this.directoriesRepository.saveAll(directories);
+            return directories;
+        }
+        else
+        {
+            //https://www.baeldung.com/java-iterable-to-collection
+            Iterable<Directory> iterable = this.getDirectoriesRepository().findAll();
+            List<Directory> result = StreamSupport.stream(iterable.spliterator(), false)
+                    .collect(Collectors.toList());
+
+            return result
+                    .stream()
+                    .sorted()
+                    .toList();
+        }
+
     }
 
     private Set<InfoAction> loadConfig()
@@ -101,41 +143,17 @@ public class ApplicationService
     }
 
 
-    private List<DirectoriesFetcher> loadDirectoriesWhenStarting()
-            throws URISyntaxException
+    private List<DirectoriesFetcher> getDirectoriesFetchers() throws URISyntaxException
     {
-        boolean repositoryManagerInitialized = checkIfRepositoryManagerInitialized();
-        if (!repositoryManagerInitialized)
+        log.info("Fetching the directories from the URIs, as the repository is empty");
+        FetcherFactory factory = new FetcherFactory(configPropertiesHandler);
+        List<DirectoriesFetcher> directoriesFetcherList = factory.getFetchers();
+        for (DirectoriesFetcher directoryFetcher: directoriesFetcherList)
         {
-            log.debug("Repository manager was not initialized previously!");
-            repositoryManager.initRepositoryManager();
+            directoryFetcher.fetchAllFromURI();
         }
-        else
-            log.debug("Repository manager was initialized previously!");
-
-        repositoryHasDirectoriesInfo = checkIfDirectoriesInfoExists();
-        log.info("Repository exists: {}, repository has directories info: {}",
-                repositoryManagerInitialized, repositoryHasDirectoriesInfo);
-
-        if (!repositoryHasDirectoriesInfo)
-        {
-            log.info("Fetching the repositories from the URIs, as the repository is empty");
-            FetcherFactory factory = new FetcherFactory(configPropertiesHandler);
-            List<DirectoriesFetcher> directoriesFetcherList = factory.getFetchers();
-            for (DirectoriesFetcher directoryFetcher: directoriesFetcherList)
-            {
-                directoryFetcher.fetchAllFromURI();
-            }
-            log.info("URIs fetched");
-
-            return directoriesFetcherList;
-        }
-        else
-        {
-            //TODO: Implement the logic to load directories from the repository
-            return List.of();
-        }
-
+        log.info("URIs fetched");
+        return directoriesFetcherList;
     }
 
     private boolean checkIfDirectoriesInfoExists()
