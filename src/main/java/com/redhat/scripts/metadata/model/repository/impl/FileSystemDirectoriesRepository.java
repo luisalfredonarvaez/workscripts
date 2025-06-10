@@ -116,14 +116,13 @@ public class FileSystemDirectoriesRepository extends AbstractRepository<Director
     @Override
     public Optional<Directory> findById(UUID uuid)
     {
-        //TODO
         Objects.requireNonNull(uuid, "ID cannot be null");
         validateInitialization();
 
         List<String> filenames = getDirectoriesFilenamesStartingWith(DBFILES_DIRECTORY_PREFIX + uuid);
         if (filenames.isEmpty())
         {
-            log.debug("No directory found with ID: {}", uuid);
+            log.debug("No file for directory with ID: '{}' found", uuid);
             return Optional.empty();
         }
 
@@ -158,14 +157,16 @@ public class FileSystemDirectoriesRepository extends AbstractRepository<Director
     @Override
     public boolean existsById(UUID uuid)
     {
-        //TODO
-        return false;
+        Objects.requireNonNull(uuid, "ID cannot be null");
+        validateInitialization();
+
+        List<String> filenames = getDirectoriesFilenamesStartingWith(DBFILES_DIRECTORY_PREFIX + uuid);
+        return !filenames.isEmpty();
     }
 
     @Override
     public Iterable<Directory> findAll()
     {
-        //TODO
         List<String> filenames = getDirectoriesFilenamesStartingWith(DBFILES_DIRECTORY_PREFIX);
         if (null == filenames || filenames.size() == 0)
         {
@@ -196,6 +197,113 @@ public class FileSystemDirectoriesRepository extends AbstractRepository<Director
                 .toList();
 
         return ret;
+    }
+
+    @Override
+    public Iterable<Directory> findAllById(Iterable<UUID> uuids)
+    {
+        Objects.requireNonNull(uuids, "IDs list cannot be null");
+        validateInitialization();
+
+        List<Directory> entityList = new ArrayList<>();
+
+        for (UUID uuid : uuids)
+        {
+            if (null == uuid)
+            {
+                log.debug("null uuuid found");
+                continue;
+            }
+
+            List<String> filenames = getDirectoriesFilenamesStartingWith(DBFILES_DIRECTORY_PREFIX + uuid);
+            if (filenames.isEmpty())
+            {
+                log.debug("No file for directory with ID: '{}' found", uuid);
+                continue;
+            }
+
+            if (filenames.size() > 1)
+            {
+                String message = String.format("Multiple directories found with ID: %s. Programming error!", uuid);
+                log.error(message);
+                throw new RuntimeException(message);
+            }
+
+            String filename = filenames.get(0);
+            try
+            {
+                entityList.add(fetchDirectoryFromPath(fileSystemRepositoryManager.getDbPathDirectory(), filename));
+            }
+            catch (IOException e)
+            {
+                String message = String.format("Error fetching directory from path: %s", filename);
+                log.error(message, e);
+                throw new RuntimeException(message);
+            }
+        }
+
+        return entityList;
+    }
+
+    @Override
+    public void deleteById(UUID uuid)
+    {
+        Objects.requireNonNull(uuid, "ID cannot be null");
+        validateInitialization();
+
+        List<String> filenames = getDirectoriesFilenamesStartingWith(DBFILES_DIRECTORY_PREFIX + uuid);
+        if (filenames.isEmpty())
+        {
+            log.debug("No file for directory with ID: '{}' found", uuid);
+            return;
+        }
+
+        if (filenames.size() > 1)
+        {
+            String message = String.format("Multiple directories found with ID: %s. Programming error!", uuid);
+            log.error(message);
+            throw new RuntimeException(message);
+        }
+
+        String filename = filenames.get(0);
+        File file = new File(fileSystemRepositoryManager.getDbPathDirectory(), filename);
+
+        if (!file.exists())
+        {
+            log.debug("Directory file does not exist: " + file.getAbsolutePath());
+            return;
+        }
+
+        if (!file.delete())
+        {
+            log.error("Failed to delete directory file: " + file.getAbsolutePath());
+            throw new RuntimeException("Failed to delete directory file: " + file.getAbsolutePath());
+        }
+    }
+
+    @Override
+    public void delete(Directory entity)
+    {
+        Objects.requireNonNull(entity, "ID cannot be null");
+        this.deleteById(entity.getId());
+    }
+
+    @Override
+    public void deleteAllById(Iterable<? extends UUID> uuids)
+    {
+        //TODO
+    }
+
+    @Override
+    public void deleteAll(Iterable<? extends Directory> entities)
+    {
+        //TODO
+    }
+
+    @Override
+    public void deleteAll()
+    {
+        //TODO
     }
 
     private void validateInitialization()
@@ -234,13 +342,6 @@ public class FileSystemDirectoriesRepository extends AbstractRepository<Director
         return directory;
     }
 
-    @Override
-    public Iterable<Directory> findAllById(Iterable<UUID> uuids)
-    {
-        //TODO
-        return null;
-    }
-
     private List<String> getDirectoriesFilenamesStartingWith(String strFilter)
     {
         Objects.requireNonNull(strFilter);
@@ -252,35 +353,5 @@ public class FileSystemDirectoriesRepository extends AbstractRepository<Director
         return Collections.unmodifiableList(
                 null == listDirectories ? List.of() : List.of(listDirectories)
         );
-    }
-
-    @Override
-    public void deleteById(UUID uuid)
-    {
-        //TODO
-    }
-
-    @Override
-    public void delete(Directory entity)
-    {
-        //TODO
-    }
-
-    @Override
-    public void deleteAllById(Iterable<? extends UUID> uuids)
-    {
-        //TODO
-    }
-
-    @Override
-    public void deleteAll(Iterable<? extends Directory> entities)
-    {
-        //TODO
-    }
-
-    @Override
-    public void deleteAll()
-    {
-        //TODO
     }
 }
